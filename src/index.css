@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  /* font-family: 'Open Sans', system-ui, sans-serif; */
+    /* font-family: "Urbanist", sans-serif; */
+  font-family: 'Poppins', system-ui, sans-serif;
+
+}
+
+/* h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-weight: 500 !important;
+} */
+
+.font-bold {
+  font-weight: 500 !important;
+}

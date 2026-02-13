@@ -1,0 +1,103 @@
+{
+  "blogs": [
+    {
+      "id": 1,
+      "title": "Understanding Laparoscopic Surgery: Benefits and Recovery",
+      "excerpt": "Learn about the advantages of minimally invasive surgery and what to expect during recovery. Discover how laparoscopic techniques can reduce pain and speed up healing.",
+      "image": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&h=600&fit=crop",
+      "date": "March 15, 2024",
+      "category": "Surgery",
+      "author": "Dr. Anand",
+      "readTime": "5 min read"
+    },
+    {
+      "id": 2,
+      "title": "Gallstones: Symptoms, Causes, and Treatment Options",
+      "excerpt": "Everything you need to know about gallstones and modern treatment approaches. Understanding the signs and when to seek medical attention.",
+      "image": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=600&fit=crop",
+      "date": "March 10, 2024",
+      "category": "Health Tips",
+      "author": "Dr. Anand",
+      "readTime": "7 min read"
+    },
+    {
+      "id": 3,
+      "title": "Hernia Repair: When Surgery is Necessary",
+      "excerpt": "Comprehensive guide to hernia types, symptoms, and surgical solutions. Learn about different hernia repair techniques and recovery expectations.",
+      "image": "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800&h=600&fit=crop",
+      "date": "March 5, 2024",
+      "category": "Surgery",
+      "author": "Dr. Anand",
+      "readTime": "6 min read"
+    },
+    {
+      "id": 4,
+      "title": "Bariatric Surgery: A Life-Changing Decision",
+      "excerpt": "Exploring weight loss surgery options and their impact on health. Understanding the benefits, risks, and long-term outcomes of bariatric procedures.",
+      "image": "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&h=600&fit=crop",
+      "date": "February 28, 2024",
+      "category": "Bariatric",
+      "author": "Dr. Anand",
+      "readTime": "8 min read"
+    },
+    {
+      "id": 5,
+      "title": "Digestive Health: Tips for a Healthy Gut",
+      "excerpt": "Essential advice for maintaining optimal digestive health. Learn about diet, lifestyle changes, and when to consult a specialist.",
+      "image": "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&h=600&fit=crop",
+      "date": "February 20, 2024",
+      "category": "Health Tips",
+      "author": "Dr. Anand",
+      "readTime": "5 min read"
+    },
+    {
+      "id": 6,
+      "title": "Appendicitis: Recognizing the Warning Signs",
+      "excerpt": "Critical information about appendicitis symptoms and emergency care. Know when to seek immediate medical attention.",
+      "image": "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&h=600&fit=crop",
+      "date": "February 15, 2024",
+      "category": "Emergency",
+      "author": "Dr. Anand",
+      "readTime": "4 min read"
+    },
+    {
+      "id": 7,
+      "title": "Post-Surgery Care: Essential Recovery Tips",
+      "excerpt": "Expert guidance for optimal recovery after surgical procedures. Learn about wound care, diet, and activity restrictions.",
+      "image": "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=800&h=600&fit=crop",
+      "date": "February 10, 2024",
+      "category": "Recovery",
+      "author": "Dr. Anand",
+      "readTime": "6 min read"
+    },
+    {
+      "id": 8,
+      "title": "Colorectal Health: Prevention and Screening",
+      "excerpt": "Important information about colorectal health and cancer prevention. Understanding screening guidelines and risk factors.",
+      "image": "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&h=600&fit=crop",
+      "date": "February 5, 2024",
+      "category": "Prevention",
+      "author": "Dr. Anand",
+      "readTime": "7 min read"
+    },
+    {
+      "id": 9,
+      "title": "Minimally Invasive Surgery: The Future of Healthcare",
+      "excerpt": "Exploring advanced surgical techniques and their benefits. How modern technology is revolutionizing patient care.",
+      "image": "https://images.unsplash.com/photo-1551076805-e1869033e561?w=800&h=600&fit=crop",
+      "date": "January 30, 2024",
+      "category": "Surgery",
+      "author": "Dr. Anand",
+      "readTime": "8 min read"
+    }
+  ],
+  "categories": [
+    { "name": "All", "count": 9 },
+    { "name": "Surgery", "count": 4 },
+    { "name": "Health Tips", "count": 2 },
+    { "name": "Bariatric", "count": 1 },
+    { "name": "Emergency", "count": 1 },
+    { "name": "Recovery", "count": 1 },
+    { "name": "Prevention", "count": 1 }
+  ]
+}

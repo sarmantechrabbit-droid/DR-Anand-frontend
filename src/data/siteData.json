@@ -1,0 +1,266 @@
+{
+  "site": {
+    "name": "Dr. Anand",
+    "title": "Gastro Surgeon & Laparoscopic Specialist",
+    "phone": "+91 98765 43210",
+    "email": "info@anandgastrosurgeon.com",
+    "address": "123 Medical Center, City, State - 123456"
+  },
+  "hero": {
+    "title": "Expert Gastro & Laparoscopic Surgery",
+    "subtitle": "Providing Advanced Surgical Care with Compassion",
+    "description": "Leading gastroenterologist and laparoscopic surgeon with over 15 years of experience in minimally invasive procedures",
+    "image": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=1200&h=800&fit=crop"
+  },
+  "about": {
+    "title": "About Dr. Anand",
+    "description": "Dr. Anand is a highly skilled gastroenterologist and laparoscopic surgeon with extensive experience in treating digestive disorders and performing minimally invasive surgeries. With a patient-first approach and commitment to excellence, Dr. Anand has successfully treated thousands of patients.",
+    "qualifications": [
+      "MBBS, MS (General Surgery)",
+      "DNB (Surgical Gastroenterology)",
+      "Fellowship in Laparoscopic Surgery",
+      "15+ Years of Experience"
+    ],
+    "image": "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&h=800&fit=crop"
+  },
+  "services": [
+    {
+      "id": 1,
+      "title": "Gastro Cancer Surgery",
+      "description": "Experience compassionate and comprehensive cancer care with Dr. Anand Patel.",
+      "icon": "Scissors"
+    },
+    {
+      "id": 2,
+      "title": "Gastrointestinal Surgery",
+      "description": "Dr. Anand Patel is a Best gastro surgeon in ahmedabad who provides exceptional gastrointestinal.",
+      "icon": "Activity"
+    },
+    {
+      "id": 3,
+      "title": "Acid reflux surgery",
+      "description": "Explore life-changing Mini Bypass Surgery for effective weight loss and improved health outcomes.",
+      "icon": "Shield"
+    },
+    {
+      "id": 4,
+      "title": "Obesity surgery",
+      "description": "Dr. Anand Patel - Best obesity surgeon, a specialist in this field, performs surgeries such as gastric bypass, sleeve gastrectomy, and adjustable gastric banding.",
+      "icon": "Zap"
+    },
+    {
+      "id": 5,
+      "title": "Gastric Surgery",
+      "description": "Treatment for stomach ulcers, tumors, and other gastric conditions",
+      "icon": "Heart"
+    },
+    {
+      "id": 6,
+      "title": "Colorectal Surgery",
+      "description": "Surgical treatment for colon and rectal disorders",
+      "icon": "Stethoscope"
+    },
+    {
+      "id": 7,
+      "title": "Endoscopy",
+      "description": "Diagnostic and therapeutic endoscopic procedures",
+      "icon": "Search"
+    },
+    {
+      "id": 8,
+      "title": "Bariatric Surgery",
+      "description": "Weight loss surgery for obesity management",
+      "icon": "TrendingDown"
+    }
+  ],
+  "internationalPatientSupport": {
+    "title": "Bariatric Center In India For International Patient",
+    "description": "Complete end-to-end support for overseas patients, from first consultation to post-operative care and follow-up.",
+    "cards": [
+      {
+        "id": 1,
+        "title": "Connectivity",
+        "icon": "Globe2"
+      },
+      {
+        "id": 2,
+        "title": "Pre-travel Consultations",
+        "icon": "MessageCirclePlus"
+      },
+      {
+        "id": 3,
+        "title": "Visa and Travel Assistance",
+        "icon": "Passport"
+      },
+      {
+        "id": 4,
+        "title": "International Patient Help Desk",
+        "icon": "Headset"
+      },
+      {
+        "id": 5,
+        "title": "Admission and Discharge Process",
+        "icon": "Bed"
+      },
+      {
+        "id": 6,
+        "title": "Post Surgery Follow Up",
+        "icon": "CalendarPlus2"
+      }
+    ]
+  },
+  "areaOfExpertise": {
+    "badge": "25 Years of Expertise",
+    "title": "Area of Expertise",
+    "description": "Advanced bariatric and gastrointestinal procedures delivered with modern minimally invasive techniques.",
+    "centerImage": "https://images.unsplash.com/photo-1549476464-37392f717541?w=700&h=900&fit=crop",
+    "leftProcedures": [
+      {
+        "id": 1,
+        "title": "Laparoscopic Sleeve Gastrectomy",
+        "icon": "ScanLine"
+      },
+      {
+        "id": 2,
+        "title": "Gastric Bypass Surgery",
+        "icon": "Workflow"
+      },
+      {
+        "id": 3,
+        "title": "Laparoscopic Adjustable Gastric Banding",
+        "icon": "Disc3"
+      },
+      {
+        "id": 4,
+        "title": "Gastric Balloon",
+        "icon": "CircleGauge"
+      },
+      {
+        "id": 5,
+        "title": "Biliopancreatic Diversion",
+        "icon": "GitMerge"
+      }
+    ],
+    "rightProcedures": [
+      {
+        "id": 1,
+        "title": "GaBP Ring Implantation",
+        "icon": "Link2"
+      },
+      {
+        "id": 2,
+        "title": "Mini Gastric Bypass",
+        "icon": "Split"
+      },
+      {
+        "id": 3,
+        "title": "Revision Weight Loss Surgery",
+        "icon": "RefreshCw"
+      },
+      {
+        "id": 4,
+        "title": "Robotic Bariatric Surgery",
+        "icon": "Bot"
+      },
+      {
+        "id": 5,
+        "title": "Single Incision Laparoscopic Surgery",
+        "icon": "Scissors"
+      }
+    ]
+  },
+  "whyChooseUs": [
+    {
+      "id": 1,
+      "title": "Expert Care",
+      "description": "15+ years of specialized experience in gastro and laparoscopic surgery",
+      "icon": "Award"
+    },
+    {
+      "id": 2,
+      "title": "Advanced Technology",
+      "description": "State-of-the-art equipment for precise and safe procedures",
+      "icon": "Cpu"
+    },
+    {
+      "id": 3,
+      "title": "Minimal Invasive",
+      "description": "Focus on laparoscopic techniques for faster recovery",
+      "icon": "Target"
+    },
+    {
+      "id": 4,
+      "title": "Patient-Centered",
+      "description": "Personalized treatment plans tailored to individual needs",
+      "icon": "Users"
+    }
+  ],
+  "testimonials": [
+    {
+      "id": 1,
+      "name": "Rajesh Kumar",
+      "text": "Dr. Anand performed my gallbladder surgery with such precision. The recovery was quick and I'm back to normal life. Highly recommended!",
+      "rating": 5
+    },
+    {
+      "id": 2,
+      "name": "Priya Sharma",
+      "text": "Excellent doctor with great expertise. He explained everything clearly and the laparoscopic procedure was painless. Very satisfied with the care.",
+      "rating": 5
+    },
+    {
+      "id": 3,
+      "name": "Amit Patel",
+      "text": "Best gastro surgeon in the city. Professional, caring, and highly skilled. My hernia surgery was successful and recovery was smooth.",
+      "rating": 5
+    }
+  ],
+  "stats": [
+    {
+      "id": 1,
+      "number": "5000+",
+      "label": "Successful Surgeries"
+    },
+    {
+      "id": 2,
+      "number": "15+",
+      "label": "Years Experience"
+    },
+    {
+      "id": 3,
+      "number": "98%",
+      "label": "Success Rate"
+    },
+    {
+      "id": 4,
+      "number": "2000+",
+      "label": "REVIEWS"
+    }
+  ],
+  "blogs": [
+    {
+      "id": 1,
+      "title": "Understanding Laparoscopic Surgery: Benefits and Recovery",
+      "excerpt": "Learn about the advantages of minimally invasive surgery and what to expect during recovery.",
+      "image": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&h=600&fit=crop",
+      "date": "March 15, 2024",
+      "category": "Surgery"
+    },
+    {
+      "id": 2,
+      "title": "Gallstones: Symptoms, Causes, and Treatment Options",
+      "excerpt": "Everything you need to know about gallstones and modern treatment approaches.",
+      "image": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=600&fit=crop",
+      "date": "March 10, 2024",
+      "category": "Health Tips"
+    },
+    {
+      "id": 3,
+      "title": "Hernia Repair: When Surgery is Necessary",
+      "excerpt": "Comprehensive guide to hernia types, symptoms, and surgical solutions.",
+      "image": "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800&h=600&fit=crop",
+      "date": "March 5, 2024",
+      "category": "Surgery"
+    }
+  ]
+}
