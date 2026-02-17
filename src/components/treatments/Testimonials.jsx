@@ -3,8 +3,9 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import { Play, Quote } from "lucide-react";
 import SectionWrapper from "./SectionWrapper";
+import { API_BASE_URL } from "../../api/api";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+const API_BASE = API_BASE_URL;
 const API_ORIGIN = new URL(API_BASE).origin;
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&h=600&fit=crop";

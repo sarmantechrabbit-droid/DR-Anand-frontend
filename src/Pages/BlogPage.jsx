@@ -7,8 +7,9 @@ import BlogHero from '../components/blog/BlogHero'
 import BlogCard from '../components/blog/BlogCard'
 import BlogSidebar from '../components/blog/BlogSidebar'
 import Pagination from '../components/blog/Pagination'
+import { API_BASE_URL } from '../api/api'
 
-const BLOG_API_URL = 'https://backend-dr-x19a.vercel.app/api/blogs'
+const BLOG_API_URL = `${API_BASE_URL}/api/blogs`
 const BLOG_API_ORIGIN = new URL(BLOG_API_URL).origin
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&h=600&fit=crop'

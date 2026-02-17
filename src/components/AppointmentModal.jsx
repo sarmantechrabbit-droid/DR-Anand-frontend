@@ -2,6 +2,7 @@ import { useState } from 'react'
 import axios from 'axios'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Calendar, User, Phone, MapPin } from 'lucide-react'
+import { API_BASE_URL } from '../api/api'
 
 export default function AppointmentModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
@@ -57,7 +58,7 @@ export default function AppointmentModal({ isOpen, onClose }) {
 
     try {
       await axios.post(
-        'https://backend-dr-x19a.vercel.app/api/appointments',
+        `${API_BASE_URL}/api/appointments`,
         {
           firstName: formData.firstName,
           lastName: formData.lastName,

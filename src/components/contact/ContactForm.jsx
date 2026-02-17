@@ -2,6 +2,7 @@ import { useState } from 'react'
 import axios from 'axios'
 import { motion } from 'framer-motion'
 import { SendHorizonal } from 'lucide-react'
+import { API_BASE_URL } from '../../api/api'
 
 export default function ContactForm({ formContent }) {
   const [formData, setFormData] = useState({
@@ -58,7 +59,7 @@ export default function ContactForm({ formContent }) {
     setIsSubmitting(true)
 
     try {
-      const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
+      const apiBase = API_BASE_URL
 
       await axios.post(
         `${apiBase}/api/inquiries`,

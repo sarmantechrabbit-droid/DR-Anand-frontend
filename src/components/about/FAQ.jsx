@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { HelpCircle, Plus, Minus } from 'lucide-react'
+import { API_BASE_URL } from '../../api/api'
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState(0)
@@ -17,9 +18,7 @@ export default function FAQ() {
         setError('')
 
         const endpoints = [
-          // '/api/faqs',
-          // 'http://localhost:500/api/faqs',
-          'https://backend-dr-x19a.vercel.app/api/faqs',
+          `${API_BASE_URL}/api/faqs`,
         ]
 
         let items = null
