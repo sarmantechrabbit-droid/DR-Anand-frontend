@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import axios from 'axios'
 import { motion } from 'framer-motion'
 import { SendHorizonal } from 'lucide-react'
 
@@ -10,22 +11,85 @@ export default function ContactForm({ formContent }) {
     subject: '',
     message: '',
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const [submitSuccess, setSubmitSuccess] = useState('')
+  const [errors, setErrors] = useState({})
+
+  const validateForm = () => {
+    const nextErrors = {}
+    const namePattern = /^[A-Za-z ]{2,}$/
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const phoneDigits = formData.phone.replace(/\D/g, '')
+
+    if (!namePattern.test(formData.fullName.trim())) {
+      nextErrors.fullName = 'Enter a valid full name.'
+    }
+    if (!emailPattern.test(formData.email.trim())) {
+      nextErrors.email = 'Enter a valid email address.'
+    }
+    if (phoneDigits.length < 10 || phoneDigits.length > 15) {
+      nextErrors.phone = 'Enter a valid phone number (10 to 15 digits).'
+    }
+    if (formData.subject.trim().length < 3) {
+      nextErrors.subject = 'Subject must be at least 3 characters.'
+    }
+    if (formData.message.trim().length < 10) {
+      nextErrors.message = 'Message must be at least 10 characters.'
+    }
+
+    setErrors(nextErrors)
+    return Object.keys(nextErrors).length === 0
+  }
 
   const handleChange = (event) => {
     const { name, value } = event.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: '' }))
+    }
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    alert('Form submitted! (This is a demo)')
-    setFormData({
-      fullName: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: '',
-    })
+    setSubmitError('')
+    setSubmitSuccess('')
+    if (!validateForm()) return
+    setIsSubmitting(true)
+
+    try {
+      const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
+
+      await axios.post(
+        `${apiBase}/api/inquiries`,
+        {
+          fullName: formData.fullName,
+          name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          subject: formData.subject,
+          message: formData.message,
+        },
+        { timeout: 10000 }
+      )
+
+      setSubmitSuccess('Message sent successfully.')
+      setFormData({
+        fullName: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: '',
+      })
+    } catch (error) {
+      const apiMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        'Unable to send message. Please try again.'
+      setSubmitError(apiMessage)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -48,6 +112,7 @@ export default function ContactForm({ formContent }) {
             placeholder="Enter your full name"
             value={formData.fullName}
             onChange={handleChange}
+            error={errors.fullName}
           />
           <InputField
             label="Email"
@@ -56,6 +121,7 @@ export default function ContactForm({ formContent }) {
             placeholder="Enter your email"
             value={formData.email}
             onChange={handleChange}
+            error={errors.email}
           />
         </div>
 
@@ -67,6 +133,7 @@ export default function ContactForm({ formContent }) {
             placeholder="Enter your phone"
             value={formData.phone}
             onChange={handleChange}
+            error={errors.phone}
           />
           <InputField
             label="Subject"
@@ -75,6 +142,7 @@ export default function ContactForm({ formContent }) {
             placeholder="Enter subject"
             value={formData.subject}
             onChange={handleChange}
+            error={errors.subject}
           />
         </div>
 
@@ -87,25 +155,38 @@ export default function ContactForm({ formContent }) {
             placeholder="Write your message"
             value={formData.message}
             onChange={handleChange}
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-700 outline-none transition focus:border-[#0EA5E9] focus:ring-4 focus:ring-sky-100"
+            className={`w-full rounded-xl border bg-white px-4 py-3 text-slate-700 outline-none transition ${
+              errors.message
+                ? 'border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100'
+                : 'border-slate-200 focus:border-[#0EA5E9] focus:ring-4 focus:ring-sky-100'
+            }`}
           />
+          {errors.message && <p className="mt-1 text-xs text-red-600">{errors.message}</p>}
         </div>
 
         <motion.button
           type="submit"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#58c8ca] px-6 py-3.5 font-semibold text-white shadow-lg shadow-blue-300/40 transition hover:bg-[#1D4ED8]"
+          disabled={isSubmitting}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#58c8ca] px-6 py-3.5 font-semibold text-white shadow-lg shadow-blue-300/40 transition hover:bg-[#286e76]"
         >
           <SendHorizonal size={18} />
-          {formContent.buttonText}
+          {isSubmitting ? 'Sending...' : formContent.buttonText}
         </motion.button>
+
+        {submitSuccess && (
+          <p className="text-sm font-medium text-emerald-600">{submitSuccess}</p>
+        )}
+        {submitError && (
+          <p className="text-sm font-medium text-red-600">{submitError}</p>
+        )}
       </form>
     </motion.div>
   )
 }
 
-function InputField({ label, type, name, placeholder, value, onChange }) {
+function InputField({ label, type, name, placeholder, value, onChange, error }) {
   return (
     <div>
       <label className="mb-2 block text-sm font-medium text-slate-700">{label}</label>
@@ -116,8 +197,13 @@ function InputField({ label, type, name, placeholder, value, onChange }) {
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-700 outline-none transition focus:border-[#0EA5E9] focus:ring-4 focus:ring-sky-100"
+        className={`w-full rounded-xl border bg-white px-4 py-3 text-slate-700 outline-none transition ${
+          error
+            ? 'border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100'
+            : 'border-slate-200 focus:border-[#0EA5E9] focus:ring-4 focus:ring-sky-100'
+        }`}
       />
+      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </div>
   )
 }

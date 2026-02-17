@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion'
 import { Calendar, Clock, ArrowRight, User } from 'lucide-react'
 
+const FALLBACK_IMAGE =
+  'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&h=600&fit=crop'
+
 export default function BlogCard({ blog, index }) {
   return (
     <motion.article
@@ -12,11 +15,17 @@ export default function BlogCard({ blog, index }) {
       whileHover={{ y: -8 }}
     >
       <div className="relative overflow-hidden">
-        <img
-          src={blog.image}
-          alt={blog.title}
-          className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
-        />
+       <img
+  src={blog.image || FALLBACK_IMAGE}
+  alt={blog.title}
+  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+  onError={(event) => {
+    event.currentTarget.src = FALLBACK_IMAGE
+  }}
+/>
+
+       
+
         <div className="absolute top-4 left-4">
           <span className="bg-[#256c79] text-white px-4 py-2 rounded-full text-sm font-bold">
             {blog.category}
@@ -49,7 +58,7 @@ export default function BlogCard({ blog, index }) {
             <User size={16} />
             <span>{blog.author}</span>
           </div>
-          
+
           <motion.button
             className="flex items-center gap-2 text-[#256c79] font-semibold hover:gap-3 transition-all"
             whileHover={{ scale: 1.05 }}

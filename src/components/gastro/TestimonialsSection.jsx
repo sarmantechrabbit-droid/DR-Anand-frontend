@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Quote } from 'lucide-react'
+import { PlayCircle, Quote } from 'lucide-react'
 import SectionWrapper from './SectionWrapper'
 
 export default function TestimonialsSection({ data }) {
@@ -22,31 +22,58 @@ export default function TestimonialsSection({ data }) {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {data.map((testimonial, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100"
-              >
-                <div className="mb-6">
-                  <img
-                    src={testimonial.image}
-                    alt={testimonial.name}
-                    className="w-full h-48 object-cover rounded-xl"
-                  />
-                </div>
-                <Quote className="text-[#58c8ca] mb-4" size={32} />
-                <p className="text-gray-600 mb-6 leading-relaxed">
-                  {testimonial.text}
-                </p>
-                <div className="font-bold text-gray-900">
-                  {testimonial.name}
-                </div>
-              </motion.div>
-            ))}
+            {data.map((testimonial, index) => {
+              // Support multiple API/data key variants for video URL.
+              const videoLink =
+                testimonial.videoLink || testimonial.videoUrl || testimonial.videoURL || ''
+
+              return (
+                <motion.article
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100"
+                >
+                  <div className="mb-6">
+                    {videoLink ? (
+                      <a
+                        href={videoLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group relative block"
+                        aria-label={`Watch video testimonial from ${testimonial.name}`}
+                      >
+                        <img
+                          src={testimonial.image}
+                          alt={testimonial.name}
+                          className="w-full h-48 object-cover rounded-xl"
+                        />
+                        <div className="absolute inset-0 rounded-xl bg-black/20 group-hover:bg-black/35 transition-colors" />
+                        <PlayCircle
+                          className="absolute inset-0 m-auto text-white drop-shadow-lg group-hover:scale-110 transition-transform"
+                          size={56}
+                        />
+                      </a>
+                    ) : (
+                      <img
+                        src={testimonial.image}
+                        alt={testimonial.name}
+                        className="w-full h-48 object-cover rounded-xl"
+                      />
+                    )}
+                  </div>
+                  <Quote className="text-[#58c8ca] mb-4" size={32} />
+                  <p className="text-gray-600 mb-6 leading-relaxed">
+                    {testimonial.text}
+                  </p>
+                  <div className="font-bold text-gray-900">
+                    {testimonial.name}
+                  </div>
+                </motion.article>
+              )
+            })}
           </div>
         </SectionWrapper>
       </div>

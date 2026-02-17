@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import FloatingCTA from './components/FloatingCTA'
-import AboutPage from './pages/AboutPage'
 import HomePage from './Pages/HomePage'
 import BlogPage from './Pages/BlogPage'
 import ContactPage from './Pages/Contact'
@@ -10,6 +9,7 @@ import GastroSurgeonAhmedabad from './Pages/GastroSurgeonAhmedabad'
 import OurTreatments from './Pages/OurTreatments'
 import BariatricSurgeonAhmedabad from './Pages/BariatricSurgeonAhmedabad'
 import CancerSurgeonAhmedabad from './Pages/CancerSurgeonAhmedabad'
+import AboutPage from './Pages/AboutPage'
 
 function App() {
   return (

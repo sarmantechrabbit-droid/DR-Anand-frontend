@@ -1,5 +1,33 @@
 import { Search, Tag, Clock, TrendingUp } from 'lucide-react'
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
+const API_ORIGIN = new URL(API_BASE).origin
+const FALLBACK_IMAGE =
+  'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&h=600&fit=crop'
+
+function resolveImageUrl(imageValue) {
+  const image =
+    typeof imageValue === 'string'
+      ? imageValue
+      : imageValue?.url || imageValue?.path || imageValue?.src || ''
+
+  if (!image) return FALLBACK_IMAGE
+
+  if (image.startsWith('http://') || image.startsWith('https://') || image.startsWith('data:')) {
+    return image
+  }
+
+  if (image.startsWith('/uploads/')) {
+    return `${API_ORIGIN}${image}`
+  }
+
+  if (image.startsWith('/')) {
+    return `${API_ORIGIN}${image}`
+  }
+
+  return `${API_ORIGIN}/uploads/${image}`
+}
+
 export default function BlogSidebar({ categories, recentPosts }) {
   return (
     <aside className="space-y-8">
@@ -27,12 +55,15 @@ export default function BlogSidebar({ categories, recentPosts }) {
             <li key={index} className="group cursor-pointer">
               <div className="flex gap-4">
                 <img
-                  src={post.image}
+                  src={resolveImageUrl(post.image)}
                   alt={post.title}
                   className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+                  onError={(event) => {
+                    event.currentTarget.src = FALLBACK_IMAGE
+                  }}
                 />
                 <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900 line-clamp-2 mb-2 group-hover:text-[#58c8ca] transition">
+                  <h4 className="font-semibold text-gray-900 line-clamp-2 mb-2 group-hover:text-[#58c8ca] transition truncate w-full break-words">
                     {post.title}
                   </h4>
                   <div className="flex items-center gap-1 text-xs text-gray-500">

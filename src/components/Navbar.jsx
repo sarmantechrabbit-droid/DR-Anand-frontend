@@ -1,12 +1,24 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Menu, X, Phone, Mail, Clock } from 'lucide-react'
-import siteData from '../data/siteData.json'
+import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Menu, X } from 'lucide-react'
 import logo from '../assets/images/logo.png'
 import TopBar from './TopBar'
+import AppointmentModal from './AppointmentModal'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { pathname } = useLocation()
+
+  const navClass = ({ isActive }) =>
+    `font-medium transition ${isActive ? 'text-[#58c8ca]' : 'text-gray-700 hover:text-[#58c8ca]'}`
+  const mobileNavClass = ({ isActive }) =>
+    `block py-2 transition ${isActive ? 'text-[#58c8ca]' : 'text-gray-700 hover:text-[#58c8ca]'}`
+  const isTreatmentsActive =
+    pathname === '/our-treatments' ||
+    pathname === '/gastro-surgeon-ahmedabad' ||
+    pathname === '/bariatric-surgeon-ahmedabad' ||
+    pathname === '/cancer-surgeon-ahmedabad'
 
   return (
     <>
@@ -44,45 +56,54 @@ export default function Navbar() {
             </Link>
 
             <div className="hidden lg:flex items-center gap-8">
-              <Link to="/" className="text-gray-700 hover:text-[#58c8ca] font-medium transition">
+              <NavLink to="/" end className={navClass}>
                 Home
-              </Link>
-              <Link to="/about" className="text-gray-700 hover:text-[#58c8ca] font-medium transition">
+              </NavLink>
+              <NavLink to="/about" className={navClass}>
                 About
-              </Link>
+              </NavLink>
               <div className="relative group">
-                <Link to="/our-treatments" className="flex items-center gap-1 text-gray-700 hover:text-[#58c8ca] font-medium transition">
+                <NavLink
+                  to="/our-treatments"
+                  className={`flex items-center gap-1 font-medium transition ${
+                    isTreatmentsActive ? 'text-[#58c8ca]' : 'text-gray-700 hover:text-[#58c8ca]'
+                  }`}
+                >
                   Treatments
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
-                </Link>
+                </NavLink>
                 <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                   <div className="py-2">
-                    <Link to="/gastro-surgeon-ahmedabad" className="block px-6 py-3 text-gray-700 hover:bg-[#3b9dd9]/10 hover:text-[#58c8ca] transition">
+                    <NavLink to="/gastro-surgeon-ahmedabad" className={({ isActive }) => `block px-6 py-3 transition ${isActive ? 'bg-[#3b9dd9]/10 text-[#58c8ca]' : 'text-gray-700 hover:bg-[#3b9dd9]/10 hover:text-[#58c8ca]'}`}>
                       Gastro Surgeon in Ahmedabad
-                    </Link>
-                    <Link to="/bariatric-surgeon-ahmedabad" className="block px-6 py-3 text-gray-700 hover:bg-[#3b9dd9]/10 hover:text-[#58c8ca] transition">
+                    </NavLink>
+                    <NavLink to="/bariatric-surgeon-ahmedabad" className={({ isActive }) => `block px-6 py-3 transition ${isActive ? 'bg-[#3b9dd9]/10 text-[#58c8ca]' : 'text-gray-700 hover:bg-[#3b9dd9]/10 hover:text-[#58c8ca]'}`}>
                       Bariatric surgeon in Ahmedabad
-                    </Link>
-                    <Link to="/cancer-surgeon-ahmedabad" className="block px-6 py-3 text-gray-700 hover:bg-[#3b9dd9]/10 hover:text-[#58c8ca] transition">
+                    </NavLink>
+                    <NavLink to="/cancer-surgeon-ahmedabad" className={({ isActive }) => `block px-6 py-3 transition ${isActive ? 'bg-[#3b9dd9]/10 text-[#58c8ca]' : 'text-gray-700 hover:bg-[#3b9dd9]/10 hover:text-[#58c8ca]'}`}>
                       Cancer Surgeon in Ahmedabad
-                    </Link>
+                    </NavLink>
                   </div>
                 </div>
               </div>
               {/* <Link to="/#testimonials" className="text-gray-700 hover:text-[#58c8ca] font-medium transition">
                 Testimonials
               </Link> */}
-              <Link to="/blog" className="text-gray-700 hover:text-[#58c8ca] font-medium transition">
+              <NavLink to="/blog" className={navClass}>
                 Blog
-              </Link>
-              <Link to="/contact" className="text-gray-700 hover:text-[#58c8ca] font-medium transition">
+              </NavLink>
+              <NavLink to="/contact" className={navClass}>
                 Contact
-              </Link>
-              <Link to="/contact" className="bg-[#58c8ca] text-white px-6 py-3 rounded-md hover:bg-[#4ab4b6] transition font-semibold">
+              </NavLink>
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(true)}
+                className="bg-[#58c8ca] text-white px-6 py-3 rounded-md hover:bg-[#4ab4b6] transition font-semibold"
+              >
                 Book Appointment
-              </Link>
+              </button>
             </div>
 
             <button onClick={() => setIsOpen(!isOpen)} className="lg:hidden">
@@ -101,32 +122,41 @@ export default function Navbar() {
                 </button>
               </div>
               <div className="px-4 py-4 space-y-2">
-                <Link to="/" onClick={() => setIsOpen(false)} className="block py-2 text-gray-700 hover:text-[#58c8ca]">
+                <NavLink to="/" end onClick={() => setIsOpen(false)} className={mobileNavClass}>
                   Home
-                </Link>
-                <Link to="/about" onClick={() => setIsOpen(false)} className="block py-2 text-gray-700 hover:text-[#58c8ca]">
+                </NavLink>
+                <NavLink to="/about" onClick={() => setIsOpen(false)} className={mobileNavClass}>
                   About
-                </Link>
-                <Link to="/our-treatments" onClick={() => setIsOpen(false)} className="block py-2 text-gray-700 hover:text-[#58c8ca]">
+                </NavLink>
+                <NavLink to="/our-treatments" onClick={() => setIsOpen(false)} className={mobileNavClass}>
                   Treatments
-                </Link>
+                </NavLink>
                 <Link to="/" onClick={() => setIsOpen(false)} className="block py-2 text-gray-700 hover:text-[#58c8ca]">
                   Testimonials
                 </Link>
-                <Link to="/blog" onClick={() => setIsOpen(false)} className="block py-2 text-gray-700 hover:text-[#58c8ca]">
+                <NavLink to="/blog" onClick={() => setIsOpen(false)} className={mobileNavClass}>
                   Blog
-                </Link>
-                <Link to="/contact" onClick={() => setIsOpen(false)} className="block py-2 text-gray-700 hover:text-[#58c8ca]">
+                </NavLink>
+                <NavLink to="/contact" onClick={() => setIsOpen(false)} className={mobileNavClass}>
                   Contact
-                </Link>
-                <Link to="/contact" onClick={() => setIsOpen(false)} className="block text-center bg-[#58c8ca] text-white px-4 py-3 rounded-md mt-4">
+                </NavLink>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsOpen(false)
+                    setIsModalOpen(true)
+                  }}
+                  className="block w-full text-center bg-[#58c8ca] text-white px-4 py-3 rounded-md mt-4"
+                >
                   Book Appointment
-                </Link>
+                </button>
               </div>
             </div>
           </div>
         )}
       </nav>
+
+      <AppointmentModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   )
 }

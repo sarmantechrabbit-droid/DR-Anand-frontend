@@ -1,43 +1,70 @@
-import { useState } from 'react'
-import { ChevronDown, HelpCircle, Plus, Minus } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import { HelpCircle, Plus, Minus } from 'lucide-react'
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState(0)
+  const [faqs, setFaqs] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
-  const faqs = [
-    {
-      question: "What types of surgeries does Dr. Anand specialize in?",
-      answer: "Dr. Anand specializes in Gastrointestinal Surgery, Bariatric Surgery (Weight Loss Surgery), Laparoscopic Surgery, Hernia Repairs, Gallbladder Surgery, and other minimally invasive procedures."
-    },
-    {
-      question: "What is Bariatric Surgery?",
-      answer: "Bariatric surgery is a weight loss surgery designed for individuals with severe obesity. It helps patients lose weight by making changes to the digestive system, leading to improved health and quality of life."
-    },
-    {
-      question: "How long is the recovery time after laparoscopic surgery?",
-      answer: "Recovery time varies depending on the procedure, but laparoscopic surgery typically offers faster recovery compared to traditional open surgery. Most patients can return to normal activities within 1-2 weeks."
-    },
-    {
-      question: "Is laparoscopic surgery safe?",
-      answer: "Yes, laparoscopic surgery is considered very safe when performed by experienced surgeons like Dr. Anand. It offers benefits like smaller incisions, less pain, reduced scarring, and faster recovery."
-    },
-    {
-      question: "What should I expect during my first consultation?",
-      answer: "During your first consultation, Dr. Anand will review your medical history, discuss your symptoms or concerns, perform a physical examination, and recommend appropriate diagnostic tests or treatment options."
-    },
-    {
-      question: "Do you accept insurance?",
-      answer: "Yes, we accept most major insurance plans. Please contact our office to verify if your specific insurance is accepted and to understand your coverage details."
-    },
-    {
-      question: "How do I schedule an appointment?",
-      answer: "You can schedule an appointment by calling our office directly, using the contact form on our website, or clicking the 'Book Appointment' button. Our staff will help you find a convenient time."
-    },
-    {
-      question: "What are the risks of bariatric surgery?",
-      answer: "Like any surgery, bariatric surgery carries some risks including infection, bleeding, and complications from anesthesia. However, Dr. Anand uses advanced techniques to minimize these risks and ensure patient safety."
+  useEffect(() => {
+    let isMounted = true
+
+    const fetchFaqs = async () => {
+      try {
+        setLoading(true)
+        setError('')
+
+        const endpoints = [
+          // '/api/faqs',
+          // 'http://localhost:500/api/faqs',
+          'https://backend-dr-x19a.vercel.app/api/faqs',
+        ]
+
+        let items = null
+
+        for (const endpoint of endpoints) {
+          try {
+            const response = await axios.get(endpoint, { timeout: 5000 })
+            const payload = response?.data
+            const parsed = Array.isArray(payload) ? payload : payload?.data
+
+            if (Array.isArray(parsed)) {
+              items = parsed
+              break
+            }
+          } catch {
+            // Try next endpoint.
+          }
+        }
+
+        if (isMounted) {
+          if (Array.isArray(items)) {
+            setFaqs(items)
+          } else {
+            setFaqs([])
+            setError('Failed to connect FAQ API. Check backend server and port.')
+          }
+        }
+      } catch {
+        if (isMounted) {
+          setError('Failed to load FAQs')
+          setFaqs([])
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
+      }
     }
-  ]
+
+    fetchFaqs()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   return (
     <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
@@ -65,9 +92,27 @@ export default function FAQ() {
           </div>
 
           <div className="space-y-4">
+            {loading && (
+              <div className="bg-white rounded-2xl border-2 border-gray-100 p-6 text-gray-600">
+                Loading FAQs...
+              </div>
+            )}
+
+            {!loading && error && (
+              <div className="bg-white rounded-2xl border-2 border-red-100 p-6 text-red-600">
+                {error}
+              </div>
+            )}
+
+            {!loading && !error && faqs.length === 0 && (
+              <div className="bg-white rounded-2xl border-2 border-gray-100 p-6 text-gray-600">
+                No FAQs found.
+              </div>
+            )}
+
             {faqs.map((faq, index) => (
               <div 
-                key={index} 
+                key={faq.id ?? faq._id ?? index}
                 className={`bg-white rounded-2xl shadow-sm border-2 transition-all duration-300 ${
                   openIndex === index ? 'border-[#58c8ca] shadow-lg' : 'border-gray-100 hover:border-gray-200'
                 }`}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import axios from 'axios'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Calendar, User, Phone, Mail, MapPin } from 'lucide-react'
+import { X, Calendar, User, Phone, MapPin } from 'lucide-react'
 
 export default function AppointmentModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
@@ -9,14 +10,89 @@ export default function AppointmentModal({ isOpen, onClose }) {
     mobile: '',
     city: '',
     email: '',
+    treatmentType: '',
     recaptcha: false
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const [submitSuccess, setSubmitSuccess] = useState('')
+  const [errors, setErrors] = useState({})
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    const nextErrors = {}
+    const namePattern = /^[A-Za-z ]{2,}$/
+    const cityPattern = /^[A-Za-z ]{2,}$/
+    const mobileDigits = formData.mobile.replace(/\D/g, '')
+
+    if (!namePattern.test(formData.firstName.trim())) {
+      nextErrors.firstName = 'Enter a valid first name (min 2 letters).'
+    }
+
+    if (!namePattern.test(formData.lastName.trim())) {
+      nextErrors.lastName = 'Enter a valid last name (min 2 letters).'
+    }
+
+    if (mobileDigits.length < 10 || mobileDigits.length > 15) {
+      nextErrors.mobile = 'Enter a valid mobile number (10 to 15 digits).'
+    }
+
+    if (!formData.treatmentType) {
+      nextErrors.treatmentType = 'Please select a treatment type.'
+    }
+
+    if (!cityPattern.test(formData.city.trim())) {
+      nextErrors.city = 'Enter a valid city name.'
+    }
+
+    setErrors(nextErrors)
+    return Object.keys(nextErrors).length === 0
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Form submitted:', formData)
-    alert('Appointment request submitted!')
-    onClose()
+    setSubmitError('')
+    setSubmitSuccess('')
+    if (!validateForm()) return
+    setIsSubmitting(true)
+
+    try {
+      await axios.post(
+        'https://backend-dr-x19a.vercel.app/api/appointments',
+        {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          fullName: `${formData.firstName} ${formData.lastName}`.trim(),
+          mobile: formData.mobile,
+          city: formData.city,
+          email: formData.email,
+          treatmentType: formData.treatmentType
+        },
+        { timeout: 10000 }
+      )
+
+      setSubmitSuccess('Appointment submitted successfully.')
+      setFormData({
+        firstName: '',
+        lastName: '',
+        mobile: '',
+        city: '',
+        email: '',
+        treatmentType: '',
+        recaptcha: false
+      })
+
+      setTimeout(() => {
+        onClose()
+      }, 800)
+    } catch (error) {
+      const apiMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        'Failed to submit appointment. Please try again.'
+      setSubmitError(apiMessage)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (e) => {
@@ -25,6 +101,9 @@ export default function AppointmentModal({ isOpen, onClose }) {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }))
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }))
+    }
   }
 
   return (
@@ -77,10 +156,15 @@ export default function AppointmentModal({ isOpen, onClose }) {
                         value={formData.firstName}
                         onChange={handleChange}
                         required
-                        className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#58c8ca] focus:ring-2 focus:ring-[#58c8ca]/20 outline-none transition"
+                        className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl outline-none transition ${
+                          errors.firstName
+                            ? 'border-red-400 focus:ring-2 focus:ring-red-100'
+                            : 'border-gray-200 focus:border-[#58c8ca] focus:ring-2 focus:ring-[#58c8ca]/20'
+                        }`}
                         placeholder="John"
                       />
                     </div>
+                    {errors.firstName && <p className="mt-1 text-xs text-red-600">{errors.firstName}</p>}
                   </div>
 
                   <div>
@@ -95,10 +179,15 @@ export default function AppointmentModal({ isOpen, onClose }) {
                         value={formData.lastName}
                         onChange={handleChange}
                         required
-                        className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#58c8ca] focus:ring-2 focus:ring-[#58c8ca]/20 outline-none transition"
+                        className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl outline-none transition ${
+                          errors.lastName
+                            ? 'border-red-400 focus:ring-2 focus:ring-red-100'
+                            : 'border-gray-200 focus:border-[#58c8ca] focus:ring-2 focus:ring-[#58c8ca]/20'
+                        }`}
                         placeholder="Doe"
                       />
                     </div>
+                    {errors.lastName && <p className="mt-1 text-xs text-red-600">{errors.lastName}</p>}
                   </div>
                 </div>
 
@@ -114,13 +203,18 @@ export default function AppointmentModal({ isOpen, onClose }) {
                       value={formData.mobile}
                       onChange={handleChange}
                       required
-                      className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#58c8ca] focus:ring-2 focus:ring-[#58c8ca]/20 outline-none transition"
+                      className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl outline-none transition ${
+                        errors.mobile
+                          ? 'border-red-400 focus:ring-2 focus:ring-red-100'
+                          : 'border-gray-200 focus:border-[#58c8ca] focus:ring-2 focus:ring-[#58c8ca]/20'
+                      }`}
                       placeholder="+91 XXXXX XXXXX"
                     />
                   </div>
+                  {errors.mobile && <p className="mt-1 text-xs text-red-600">{errors.mobile}</p>}
                 </div>
 
-                <div>
+                {/* <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Email *
                   </label>
@@ -136,6 +230,41 @@ export default function AppointmentModal({ isOpen, onClose }) {
                       placeholder="john@example.com"
                     />
                   </div>
+                </div> */}
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Types of Treatment *
+                  </label>
+                  <div className="relative">
+                    <select
+                      name="treatmentType"
+                      value={formData.treatmentType}
+                      onChange={handleChange}
+                      required
+                      className={`w-full appearance-none px-4 pr-10 py-3 border-2 rounded-xl bg-white text-gray-900 outline-none transition ${
+                        errors.treatmentType
+                          ? 'border-red-400 focus:ring-2 focus:ring-red-100'
+                          : 'border-gray-200 focus:border-[#58c8ca] focus:ring-2 focus:ring-[#58c8ca]/20'
+                      }`}
+                    >
+                      <option value="" disabled>
+                        Select Your Type
+                      </option>
+                      <option value="Gastro Intestinal surgery">Gastro Intestinal surgery</option>
+                      <option value="Obesity surgery">Obesity surgery</option>
+                      <option value="Cancer surgery">Cancer surgery</option>
+                    </select>
+                    <svg
+                      className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  {errors.treatmentType && <p className="mt-1 text-xs text-red-600">{errors.treatmentType}</p>}
                 </div>
 
                 <div>
@@ -150,12 +279,17 @@ export default function AppointmentModal({ isOpen, onClose }) {
                       value={formData.city}
                       onChange={handleChange}
                       required
-                      className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#58c8ca] focus:ring-2 focus:ring-[#58c8ca]/20 outline-none transition"
+                      className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl outline-none transition ${
+                        errors.city
+                          ? 'border-red-400 focus:ring-2 focus:ring-red-100'
+                          : 'border-gray-200 focus:border-[#58c8ca] focus:ring-2 focus:ring-[#58c8ca]/20'
+                      }`}
                       placeholder="Ahmedabad"
                     />
                   </div>
+                  {errors.city && <p className="mt-1 text-xs text-red-600">{errors.city}</p>}
                 </div>
-
+{/* 
                 <div className="border-2 border-gray-300 rounded bg-gray-50 p-4">
                   <div className="flex items-start gap-3">
                     <input
@@ -181,7 +315,7 @@ export default function AppointmentModal({ isOpen, onClose }) {
                       <span className="text-[10px]">Privacy - Terms</span>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 <div className="text-xs text-gray-500">
                   By submitting, you agree to our terms and conditions *
@@ -191,11 +325,19 @@ export default function AppointmentModal({ isOpen, onClose }) {
                   type="submit"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
+                  disabled={isSubmitting}
                   className="w-full bg-gradient-to-r from-[#58c8ca] to-[#4ab4b6] text-white py-4 rounded-xl font-semibold text-lg hover:shadow-lg transition flex items-center justify-center gap-2"
                 >
                   <Calendar size={20} />
-                  Submit Appointment
+                  {isSubmitting ? 'Submitting...' : 'Submit Appointment'}
                 </motion.button>
+
+                {submitSuccess && (
+                  <p className="text-sm font-medium text-emerald-600">{submitSuccess}</p>
+                )}
+                {submitError && (
+                  <p className="text-sm font-medium text-red-600">{submitError}</p>
+                )}
               </form>
             </motion.div>
           </div>

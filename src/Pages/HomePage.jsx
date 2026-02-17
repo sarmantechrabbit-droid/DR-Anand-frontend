@@ -23,7 +23,7 @@ export default function HomePage() {
       <InternationalPatientSupport />
       <AreaOfExpertise />
       {/* <Testimonials /> */}
-     <Testimonials testimonials={treatmentsPageData.testimonials} />
+     <Testimonials />
       
 
       <Blog />

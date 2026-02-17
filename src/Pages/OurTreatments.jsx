@@ -3,10 +3,10 @@ import TreatmentsGrid from '../components/treatments/TreatmentsGrid'
 import ExperienceMessage from '../components/treatments/ExperienceMessage'
 import DoctorProfile from '../components/treatments/DoctorProfile'
 import Testimonials from '../components/treatments/Testimonials'
-import FAQ from '../components/treatments/FAQ'
 import CTASection from '../components/treatments/CTASection'
 import { treatmentsPageData } from '../data/treatmentsData'
 import PageHero from '../components/PageHero'
+import FAQ from '../components/about/FAQ'
 
 export default function OurTreatments() {
   return (
@@ -19,9 +19,10 @@ export default function OurTreatments() {
       <TreatmentsGrid treatments={treatmentsPageData.sections} />
       <ExperienceMessage message={treatmentsPageData.experienceMessage} />
       <DoctorProfile data={treatmentsPageData.doctorProfile} />
-      <Testimonials testimonials={treatmentsPageData.testimonials} />
-      <FAQ faqData={treatmentsPageData.faq} />
+      <Testimonials />
+      <FAQ />
       <CTASection data={treatmentsPageData.contactCallToAction} />
     </div>
   )
 }
+  
