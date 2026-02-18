@@ -42,8 +42,8 @@ export default function ContactForm({ formContent }) {
     if (!emailPattern.test(formData.email.trim())) {
       nextErrors.email = 'Enter a valid email address.'
     }
-    if (phoneDigits.length < 10 || phoneDigits.length > 15) {
-      nextErrors.phone = 'Enter a valid phone number (10 to 15 digits).'
+    if (phoneDigits.length !== 10) {
+      nextErrors.phone = 'Enter a valid phone number (exactly 10 digits).'
     }
     if (subject.length < FIELD_LIMITS.subject.min) {
       nextErrors.subject = `Subject must be at least ${FIELD_LIMITS.subject.min} characters.`
