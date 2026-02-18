@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { Play, Quote, Heart } from "lucide-react";
+import { Play, Quote } from "lucide-react";
 import SectionWrapper from "./SectionWrapper";
 import { API_BASE_URL } from "../../api/api";
 
@@ -113,8 +113,6 @@ export default function Testimonials() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [likedIds, setLikedIds] = useState(new Set());
-  const [localLikes, setLocalLikes] = useState({});
 
   useEffect(() => {
     let isMounted = true;
@@ -168,55 +166,6 @@ export default function Testimonials() {
       isMounted = false;
     };
   }, []);
-
-  const handleLike = async (id) => {
-    if (!id || (typeof id === 'string' && id.startsWith('testimonial-'))) return;
-
-    const isLiked = likedIds.has(id);
-
-    // Optimistic UI update
-    setLikedIds((prev) => {
-      const next = new Set(prev);
-      if (isLiked) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-    setLocalLikes((prev) => ({
-      ...prev,
-      [id]: (prev[id] || 0) + (isLiked ? -1 : 1),
-    }));
-
-    try {
-      const response = await axios.patch(
-        `${API_BASE}/api/testimonials/${id}/like`,
-        {},
-        { timeout: 5000 }
-      );
-
-      if (response.data?.likes !== undefined) {
-        // Sync with real server count
-        setItems((prev) =>
-          prev.map((t) =>
-            t.id === id ? { ...t, likes: response.data.likes } : t
-          )
-        );
-        setLocalLikes((prev) => ({ ...prev, [id]: 0 }));
-      }
-    } catch (err) {
-      // Revert on failure
-      console.error("Like failed:", err.response?.status || err.message);
-      setLikedIds((prev) => {
-        const next = new Set(prev);
-        if (isLiked) next.add(id);
-        else next.delete(id);
-        return next;
-      });
-      setLocalLikes((prev) => ({
-        ...prev,
-        [id]: (prev[id] || 0) + (isLiked ? 1 : -1),
-      }));
-    }
-  };
 
   return (
     <section className="py-20 bg-white relative z-0">
@@ -308,37 +257,6 @@ export default function Testimonials() {
                   <div className="font-bold text-gray-900">
                     {testimonial.name}
                   </div>
-                  
-                  <button 
-                    type="button"
-                    onClick={(e) => {
-                      console.log("Button element clicked for ID:", testimonial.id);
-                      e.stopPropagation();
-                      handleLike(testimonial.id);
-                    }}
-                    className="flex items-center gap-1.5 group/like cursor-pointer relative z-50 p-3 -m-3 select-none"
-                    aria-label={`Like testimonial from ${testimonial.name}`}
-                  >
-                    <motion.div
-                      whileTap={{ scale: 1.5 }}
-                      className="pointer-events-none"
-                      animate={{ 
-                        scale: likedIds.has(testimonial.id) ? [1, 1.25, 1] : 1,
-                        color: likedIds.has(testimonial.id) ? "#ef4444" : "#94a3b8"
-                      }}
-                    >
-                      <Heart 
-                        size={22} 
-                        fill={likedIds.has(testimonial.id) ? "currentColor" : "transparent"} 
-                        className="transition-colors duration-300"
-                      />
-                    </motion.div>
-                    <span className={`text-base font-bold transition-colors duration-300 pointer-events-none ${
-                      likedIds.has(testimonial.id) ? "text-gray-900" : "text-slate-400"
-                    }`}>
-                      {(testimonial.likes || 0) + (localLikes[testimonial.id] || 0)}
-                    </span>
-                  </button>
                 </div>
               </motion.div>
             ))}

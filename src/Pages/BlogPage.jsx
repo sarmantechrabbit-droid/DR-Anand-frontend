@@ -56,6 +56,8 @@ export default function BlogPage() {
   const [blogs, setBlogs] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [searchWarning, setSearchWarning] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedBlog, setSelectedBlog] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -110,11 +112,43 @@ export default function BlogPage() {
     return [{ name: 'All', count: blogs.length }, ...categoryList]
   }, [blogs])
 
-  const totalPages = Math.max(1, Math.ceil(blogs.length / BLOGS_PER_PAGE))
+  const filteredBlogs = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase()
+    if (!term) return blogs
+
+    return blogs.filter((blog) => {
+      const haystack = [
+        blog.title,
+        blog.excerpt,
+        blog.category,
+        blog.author,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+
+      return haystack.includes(term)
+    })
+  }, [blogs, searchTerm])
+
+  const totalPages = Math.max(1, Math.ceil(filteredBlogs.length / BLOGS_PER_PAGE))
   const currentBlogs = useMemo(() => {
     const startIndex = (currentPage - 1) * BLOGS_PER_PAGE
-    return blogs.slice(startIndex, startIndex + BLOGS_PER_PAGE)
-  }, [blogs, currentPage])
+    return filteredBlogs.slice(startIndex, startIndex + BLOGS_PER_PAGE)
+  }, [filteredBlogs, currentPage])
+
+  const handleSearchChange = (value) => {
+    const allowedPattern = /^[a-zA-Z0-9\s-]*$/
+    setSearchTerm(value)
+    setCurrentPage(1)
+
+    if (!allowedPattern.test(value)) {
+      setSearchWarning('Use only letters, numbers, spaces, and hyphens.')
+      return
+    }
+
+    setSearchWarning('')
+  }
 
   const handlePageChange = (page) => {
     setCurrentPage(page)
@@ -157,8 +191,10 @@ export default function BlogPage() {
                 ))}
               </div>
 
-              {!loading && blogs.length === 0 && !error && (
-                <p className="mt-4 text-sm text-gray-500">No blog posts available.</p>
+              {!loading && filteredBlogs.length === 0 && !error && (
+                <p className="mt-4 text-sm text-gray-500">
+                  {searchTerm.trim() ? 'No blogs match your search.' : 'No blog posts available.'}
+                </p>
               )}
 
               <Pagination 
@@ -169,7 +205,13 @@ export default function BlogPage() {
             </div>
 
             <div className="lg:sticky lg:top-24 lg:self-start">
-              <BlogSidebar categories={categories} recentPosts={blogs.slice(0, 5)} />
+              <BlogSidebar
+                categories={categories}
+                recentPosts={blogs.slice(0, 5)}
+                searchTerm={searchTerm}
+                onSearchChange={handleSearchChange}
+                searchWarning={searchWarning}
+              />
             </div>
           </div>
         </div>

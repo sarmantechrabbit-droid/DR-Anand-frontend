@@ -4,6 +4,12 @@ import { motion } from 'framer-motion'
 import { SendHorizonal } from 'lucide-react'
 import { API_BASE_URL } from '../../api/api'
 
+const FIELD_LIMITS = {
+  fullName: { min: 3, max: 20 },
+  subject: { min: 5, max: 150 },
+  message: { min: 10, max: 500 },
+}
+
 export default function ContactForm({ formContent }) {
   const [formData, setFormData] = useState({
     fullName: '',
@@ -22,8 +28,15 @@ export default function ContactForm({ formContent }) {
     const namePattern = /^[A-Za-z ]{2,}$/
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     const phoneDigits = formData.phone.replace(/\D/g, '')
+    const fullName = formData.fullName.trim()
+    const subject = formData.subject.trim()
+    const message = formData.message.trim()
 
-    if (!namePattern.test(formData.fullName.trim())) {
+    if (fullName.length < FIELD_LIMITS.fullName.min) {
+      nextErrors.fullName = `Full Name must be at least ${FIELD_LIMITS.fullName.min} characters.`
+    } else if (fullName.length > FIELD_LIMITS.fullName.max) {
+      nextErrors.fullName = `Full Name cannot exceed ${FIELD_LIMITS.fullName.max} characters.`
+    } else if (!namePattern.test(fullName)) {
       nextErrors.fullName = 'Enter a valid full name.'
     }
     if (!emailPattern.test(formData.email.trim())) {
@@ -32,11 +45,15 @@ export default function ContactForm({ formContent }) {
     if (phoneDigits.length < 10 || phoneDigits.length > 15) {
       nextErrors.phone = 'Enter a valid phone number (10 to 15 digits).'
     }
-    if (formData.subject.trim().length < 3) {
-      nextErrors.subject = 'Subject must be at least 3 characters.'
+    if (subject.length < FIELD_LIMITS.subject.min) {
+      nextErrors.subject = `Subject must be at least ${FIELD_LIMITS.subject.min} characters.`
+    } else if (subject.length > FIELD_LIMITS.subject.max) {
+      nextErrors.subject = `Subject cannot exceed ${FIELD_LIMITS.subject.max} characters.`
     }
-    if (formData.message.trim().length < 10) {
-      nextErrors.message = 'Message must be at least 10 characters.'
+    if (message.length < FIELD_LIMITS.message.min) {
+      nextErrors.message = `Message must be at least ${FIELD_LIMITS.message.min} characters.`
+    } else if (message.length > FIELD_LIMITS.message.max) {
+      nextErrors.message = `Message cannot exceed ${FIELD_LIMITS.message.max} characters.`
     }
 
     setErrors(nextErrors)
@@ -45,6 +62,29 @@ export default function ContactForm({ formContent }) {
 
   const handleChange = (event) => {
     const { name, value } = event.target
+
+    if (name === 'fullName' && value.length > FIELD_LIMITS.fullName.max) {
+      setErrors((prev) => ({
+        ...prev,
+        fullName: `Full Name cannot exceed ${FIELD_LIMITS.fullName.max} characters.`,
+      }))
+      return
+    }
+    if (name === 'subject' && value.length > FIELD_LIMITS.subject.max) {
+      setErrors((prev) => ({
+        ...prev,
+        subject: `Subject cannot exceed ${FIELD_LIMITS.subject.max} characters.`,
+      }))
+      return
+    }
+    if (name === 'message' && value.length > FIELD_LIMITS.message.max) {
+      setErrors((prev) => ({
+        ...prev,
+        message: `Message cannot exceed ${FIELD_LIMITS.message.max} characters.`,
+      }))
+      return
+    }
+
     setFormData((prev) => ({ ...prev, [name]: value }))
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }))
@@ -114,6 +154,7 @@ export default function ContactForm({ formContent }) {
             value={formData.fullName}
             onChange={handleChange}
             error={errors.fullName}
+            maxLength={FIELD_LIMITS.fullName.max}
           />
           <InputField
             label="Email"
@@ -144,6 +185,7 @@ export default function ContactForm({ formContent }) {
             value={formData.subject}
             onChange={handleChange}
             error={errors.subject}
+            maxLength={FIELD_LIMITS.subject.max}
           />
         </div>
 
@@ -156,6 +198,7 @@ export default function ContactForm({ formContent }) {
             placeholder="Write your message"
             value={formData.message}
             onChange={handleChange}
+            maxLength={FIELD_LIMITS.message.max}
             className={`w-full rounded-xl border bg-white px-4 py-3 text-slate-700 outline-none transition ${
               errors.message
                 ? 'border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100'
@@ -187,7 +230,7 @@ export default function ContactForm({ formContent }) {
   )
 }
 
-function InputField({ label, type, name, placeholder, value, onChange, error }) {
+function InputField({ label, type, name, placeholder, value, onChange, error, maxLength }) {
   return (
     <div>
       <label className="mb-2 block text-sm font-medium text-slate-700">{label}</label>
@@ -198,6 +241,7 @@ function InputField({ label, type, name, placeholder, value, onChange, error }) 
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        maxLength={maxLength}
         className={`w-full rounded-xl border bg-white px-4 py-3 text-slate-700 outline-none transition ${
           error
             ? 'border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100'

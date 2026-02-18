@@ -29,7 +29,13 @@ function resolveImageUrl(imageValue) {
   return `${API_ORIGIN}/uploads/${image}`
 }
 
-export default function BlogSidebar({ categories, recentPosts }) {
+export default function BlogSidebar({
+  categories,
+  recentPosts,
+  searchTerm,
+  onSearchChange,
+  searchWarning,
+}) {
   return (
     <aside className="space-y-8">
       {/* Search */}
@@ -39,10 +45,15 @@ export default function BlogSidebar({ categories, recentPosts }) {
           <input
             type="text"
             placeholder="Search articles..."
+            value={searchTerm}
+            onChange={(event) => onSearchChange?.(event.target.value)}
             className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#3b9dd9] transition"
           />
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
         </div>
+        {searchWarning && (
+          <p className="mt-2 text-xs font-medium text-amber-700">{searchWarning}</p>
+        )}
       </div>
 
       {/* Recent Posts */}

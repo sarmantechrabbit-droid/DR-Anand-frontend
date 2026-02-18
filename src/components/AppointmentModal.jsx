@@ -1,11 +1,18 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Calendar, User, Phone, MapPin } from 'lucide-react'
 import { API_BASE_URL } from '../api/api'
 
 export default function AppointmentModal({ isOpen, onClose }) {
-  const [formData, setFormData] = useState({
+  const MAX_TEXT_LENGTH = 20
+  const LIMITED_FIELDS = {
+    firstName: 'First name',
+    lastName: 'Last name',
+    city: 'City',
+  }
+
+  const initialFormState = {
     firstName: '',
     lastName: '',
     mobile: '',
@@ -13,23 +20,42 @@ export default function AppointmentModal({ isOpen, onClose }) {
     email: '',
     treatmentType: '',
     recaptcha: false
+  }
+
+  const [formData, setFormData] = useState({
+    ...initialFormState
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [submitSuccess, setSubmitSuccess] = useState('')
   const [errors, setErrors] = useState({})
 
-  const validateForm = () => {
+  useEffect(() => {
+    if (!isOpen) return
+    setFormData({ ...initialFormState })
+    setErrors({})
+    setSubmitError('')
+    setSubmitSuccess('')
+  }, [isOpen])
+
+  const validateForm = (payload = formData) => {
     const nextErrors = {}
     const namePattern = /^[A-Za-z ]{2,}$/
     const cityPattern = /^[A-Za-z ]{2,}$/
-    const mobileDigits = formData.mobile.replace(/\D/g, '')
+    const mobileDigits = String(payload.mobile || '').replace(/\D/g, '')
+    const firstNameValue = String(payload.firstName || '').trim()
+    const lastNameValue = String(payload.lastName || '').trim()
+    const cityValue = String(payload.city || '').trim()
 
-    if (!namePattern.test(formData.firstName.trim())) {
+    if (firstNameValue.length > MAX_TEXT_LENGTH) {
+      nextErrors.firstName = `First name cannot exceed ${MAX_TEXT_LENGTH} characters.`
+    } else if (!namePattern.test(firstNameValue)) {
       nextErrors.firstName = 'Enter a valid first name (min 2 letters).'
     }
 
-    if (!namePattern.test(formData.lastName.trim())) {
+    if (lastNameValue.length > MAX_TEXT_LENGTH) {
+      nextErrors.lastName = `Last name cannot exceed ${MAX_TEXT_LENGTH} characters.`
+    } else if (!namePattern.test(lastNameValue)) {
       nextErrors.lastName = 'Enter a valid last name (min 2 letters).'
     }
 
@@ -37,11 +63,13 @@ export default function AppointmentModal({ isOpen, onClose }) {
       nextErrors.mobile = 'Enter a valid mobile number (10 to 15 digits).'
     }
 
-    if (!formData.treatmentType) {
+    if (!String(payload.treatmentType || '').trim()) {
       nextErrors.treatmentType = 'Please select a treatment type.'
     }
 
-    if (!cityPattern.test(formData.city.trim())) {
+    if (cityValue.length > MAX_TEXT_LENGTH) {
+      nextErrors.city = `City cannot exceed ${MAX_TEXT_LENGTH} characters.`
+    } else if (!cityPattern.test(cityValue)) {
       nextErrors.city = 'Enter a valid city name.'
     }
 
@@ -53,34 +81,33 @@ export default function AppointmentModal({ isOpen, onClose }) {
     e.preventDefault()
     setSubmitError('')
     setSubmitSuccess('')
-    if (!validateForm()) return
+
+    const payload = {
+      firstName: formData.firstName.trim(),
+      lastName: formData.lastName.trim(),
+      fullName: `${formData.firstName} ${formData.lastName}`.trim(),
+      mobile: formData.mobile.trim(),
+      city: formData.city.trim(),
+      email: formData.email.trim(),
+      treatmentType: formData.treatmentType.trim()
+    }
+
+    if (!validateForm(payload)) return
     setIsSubmitting(true)
 
     try {
-      await axios.post(
+      const response = await axios.post(
         `${API_BASE_URL}/api/appointments`,
-        {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          fullName: `${formData.firstName} ${formData.lastName}`.trim(),
-          mobile: formData.mobile,
-          city: formData.city,
-          email: formData.email,
-          treatmentType: formData.treatmentType
-        },
+        payload,
         { timeout: 10000 }
       )
 
+      if (response?.data?.success === false) {
+        throw new Error(response?.data?.message || 'Failed to submit appointment.')
+      }
+
       setSubmitSuccess('Appointment submitted successfully.')
-      setFormData({
-        firstName: '',
-        lastName: '',
-        mobile: '',
-        city: '',
-        email: '',
-        treatmentType: '',
-        recaptcha: false
-      })
+      setFormData({ ...initialFormState })
 
       setTimeout(() => {
         onClose()
@@ -98,6 +125,15 @@ export default function AppointmentModal({ isOpen, onClose }) {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
+
+    if (type !== 'checkbox' && LIMITED_FIELDS[name] && value.length > MAX_TEXT_LENGTH) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: `${LIMITED_FIELDS[name]} cannot exceed ${MAX_TEXT_LENGTH} characters.`
+      }))
+      return
+    }
+
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
@@ -156,6 +192,7 @@ export default function AppointmentModal({ isOpen, onClose }) {
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleChange}
+                        maxLength={MAX_TEXT_LENGTH}
                         required
                         className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl outline-none transition ${
                           errors.firstName
@@ -179,6 +216,7 @@ export default function AppointmentModal({ isOpen, onClose }) {
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleChange}
+                        maxLength={MAX_TEXT_LENGTH}
                         required
                         className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl outline-none transition ${
                           errors.lastName
@@ -274,12 +312,13 @@ export default function AppointmentModal({ isOpen, onClose }) {
                   </label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                    <input
-                      type="text"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                      required
+                      <input
+                        type="text"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                        maxLength={MAX_TEXT_LENGTH}
+                        required
                       className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl outline-none transition ${
                         errors.city
                           ? 'border-red-400 focus:ring-2 focus:ring-red-100'
