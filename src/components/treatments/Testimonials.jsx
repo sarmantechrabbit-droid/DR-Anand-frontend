@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { Play, Quote } from "lucide-react";
+import { Play, Quote, Heart } from "lucide-react";
 import SectionWrapper from "./SectionWrapper";
 import { API_BASE_URL } from "../../api/api";
 
@@ -9,6 +9,27 @@ const API_BASE = API_BASE_URL;
 const API_ORIGIN = new URL(API_BASE).origin;
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&h=600&fit=crop";
+
+function getStatus(item) {
+  const sources = [item, item?.data, item?.testimonial, item?.attributes];
+  for (const source of sources) {
+    if (!source || typeof source !== "object") continue;
+    const value =
+      source?.status ??
+      source?.Status ??
+      source?.approvalStatus ??
+      source?.approval_status;
+    if (typeof value === "string") {
+      return value.trim().toLowerCase();
+    }
+  }
+  return "";
+}
+
+function isPublishedTestimonial(item) {
+  const status = getStatus(item);
+  return status.startsWith("publish");
+}
 
 function resolveImageUrl(imageValue) {
   const image =
@@ -68,13 +89,32 @@ function normalizeTestimonial(item, index) {
       item?.imageDescription || item?.alt || item?.name || "Patient testimonial",
     videoUrl,
     hasYoutubeVideo,
+    status: getStatus(item),
+    likes: Number(item?.likes || 0),
   };
+}
+
+function shouldShowTestimonial(item) {
+  if (typeof item?.status === "string") {
+    const status = item.status.trim().toLowerCase();
+    return status.startsWith("publish");
+  }
+  return isPublishedTestimonial(item);
+}
+
+function unwrapTestimonialItem(item) {
+  if (!item || typeof item !== "object") return item;
+  if (item?.testimonial) return item.testimonial;
+  if (item?.data && !Array.isArray(item.data)) return item.data;
+  return item;
 }
 
 export default function Testimonials() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [likedIds, setLikedIds] = useState(new Set());
+  const [localLikes, setLocalLikes] = useState({});
 
   useEffect(() => {
     let isMounted = true;
@@ -91,14 +131,21 @@ export default function Testimonials() {
         const rawItems = Array.isArray(payload)
           ? payload
           : payload?.data || payload?.testimonials || payload?.items;
-        const apiItems = Array.isArray(rawItems)
-          ? rawItems.map((item, index) => normalizeTestimonial(item, index))
+
+        const flatItems = Array.isArray(rawItems)
+          ? rawItems.flatMap((entry) => (Array.isArray(entry) ? entry : [entry]))
           : [];
 
-        if (isMounted && apiItems.length > 0) {
+        const cleanedItems = flatItems
+          .map((item) => unwrapTestimonialItem(item))
+          .filter(Boolean);
+
+        const apiItems = cleanedItems
+          .filter((item) => isPublishedTestimonial(item))
+          .map((item, index) => normalizeTestimonial(item, index));
+
+        if (isMounted && Array.isArray(rawItems)) {
           setItems(apiItems);
-        } else if (isMounted && Array.isArray(rawItems) && rawItems.length === 0) {
-          setItems([]);
         } else if (isMounted) {
           setItems([]);
           setError("Invalid testimonials API response format.");
@@ -122,8 +169,57 @@ export default function Testimonials() {
     };
   }, []);
 
+  const handleLike = async (id) => {
+    if (!id || (typeof id === 'string' && id.startsWith('testimonial-'))) return;
+
+    const isLiked = likedIds.has(id);
+
+    // Optimistic UI update
+    setLikedIds((prev) => {
+      const next = new Set(prev);
+      if (isLiked) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+    setLocalLikes((prev) => ({
+      ...prev,
+      [id]: (prev[id] || 0) + (isLiked ? -1 : 1),
+    }));
+
+    try {
+      const response = await axios.patch(
+        `${API_BASE}/api/testimonials/${id}/like`,
+        {},
+        { timeout: 5000 }
+      );
+
+      if (response.data?.likes !== undefined) {
+        // Sync with real server count
+        setItems((prev) =>
+          prev.map((t) =>
+            t.id === id ? { ...t, likes: response.data.likes } : t
+          )
+        );
+        setLocalLikes((prev) => ({ ...prev, [id]: 0 }));
+      }
+    } catch (err) {
+      // Revert on failure
+      console.error("Like failed:", err.response?.status || err.message);
+      setLikedIds((prev) => {
+        const next = new Set(prev);
+        if (isLiked) next.add(id);
+        else next.delete(id);
+        return next;
+      });
+      setLocalLikes((prev) => ({
+        ...prev,
+        [id]: (prev[id] || 0) + (isLiked ? 1 : -1),
+      }));
+    }
+  };
+
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-white relative z-0">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionWrapper>
           <div className="text-center mb-16">
@@ -153,8 +249,8 @@ export default function Testimonials() {
             </div>
           )}
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {items.map((testimonial, index) => (
+          <div className="grid md:grid-cols-3 gap-8 relative z-10">
+            {items.filter((item) => shouldShowTestimonial(item)).map((testimonial, index) => (
               <motion.div
                 key={testimonial.id ?? testimonial._id ?? index}
                 initial={{ opacity: 0, y: 30 }}
@@ -162,7 +258,7 @@ export default function Testimonials() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 whileHover={{ y: -5 }}
-                className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100"
+                className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 relative z-10"
               >
                 {testimonial.hasYoutubeVideo ? (
                   <a
@@ -204,11 +300,45 @@ export default function Testimonials() {
                 )}
 
                 <Quote className="text-[#58c8ca] mb-4" size={28} />
-                <p className="text-gray-600 mb-4 leading-relaxed">
+                <p className="text-gray-600 mb-4 leading-relaxed line-clamp-4 min-h-24">
                   {testimonial.description}
                 </p>
-                <div className="font-bold text-gray-900">
-                  {testimonial.name}
+                
+                <div className="flex items-center justify-between">
+                  <div className="font-bold text-gray-900">
+                    {testimonial.name}
+                  </div>
+                  
+                  <button 
+                    type="button"
+                    onClick={(e) => {
+                      console.log("Button element clicked for ID:", testimonial.id);
+                      e.stopPropagation();
+                      handleLike(testimonial.id);
+                    }}
+                    className="flex items-center gap-1.5 group/like cursor-pointer relative z-50 p-3 -m-3 select-none"
+                    aria-label={`Like testimonial from ${testimonial.name}`}
+                  >
+                    <motion.div
+                      whileTap={{ scale: 1.5 }}
+                      className="pointer-events-none"
+                      animate={{ 
+                        scale: likedIds.has(testimonial.id) ? [1, 1.25, 1] : 1,
+                        color: likedIds.has(testimonial.id) ? "#ef4444" : "#94a3b8"
+                      }}
+                    >
+                      <Heart 
+                        size={22} 
+                        fill={likedIds.has(testimonial.id) ? "currentColor" : "transparent"} 
+                        className="transition-colors duration-300"
+                      />
+                    </motion.div>
+                    <span className={`text-base font-bold transition-colors duration-300 pointer-events-none ${
+                      likedIds.has(testimonial.id) ? "text-gray-900" : "text-slate-400"
+                    }`}>
+                      {(testimonial.likes || 0) + (localLikes[testimonial.id] || 0)}
+                    </span>
+                  </button>
                 </div>
               </motion.div>
             ))}

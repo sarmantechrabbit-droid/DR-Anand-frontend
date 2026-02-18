@@ -7,6 +7,7 @@ import BlogHero from '../components/blog/BlogHero'
 import BlogCard from '../components/blog/BlogCard'
 import BlogSidebar from '../components/blog/BlogSidebar'
 import Pagination from '../components/blog/Pagination'
+import BlogModal from '../components/blog/BlogModal'
 import { API_BASE_URL } from '../api/api'
 
 const BLOG_API_URL = `${API_BASE_URL}/api/blogs`
@@ -55,6 +56,10 @@ export default function BlogPage() {
   const [blogs, setBlogs] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [selectedBlog, setSelectedBlog] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const BLOGS_PER_PAGE = 6
 
   useEffect(() => {
     const controller = new AbortController()
@@ -73,9 +78,12 @@ export default function BlogPage() {
             ? payload
             : payload?.blogs || payload?.data || payload?.items || []
 
-        const mappedBlogs = Array.isArray(rawBlogs)
-          ? rawBlogs.map((item, index) => normalizeBlog(item, index))
+        const filteredBlogs = Array.isArray(rawBlogs)
+          ? rawBlogs.filter((item) => item.status === 'Published')
           : []
+
+        const mappedBlogs = filteredBlogs.map((item, index) => normalizeBlog(item, index))
+
 
         setBlogs(mappedBlogs)
       } catch (err) {
@@ -102,31 +110,28 @@ export default function BlogPage() {
     return [{ name: 'All', count: blogs.length }, ...categoryList]
   }, [blogs])
 
+  const totalPages = Math.max(1, Math.ceil(blogs.length / BLOGS_PER_PAGE))
+  const currentBlogs = useMemo(() => {
+    const startIndex = (currentPage - 1) * BLOGS_PER_PAGE
+    return blogs.slice(startIndex, startIndex + BLOGS_PER_PAGE)
+  }, [blogs, currentPage])
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleReadMore = (blog) => {
+    setSelectedBlog(blog)
+    setIsModalOpen(true)
+  }
+
   return (
     <div>
       <BlogHero />
 
       <section className="py-16 bg-gray-50">
         <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
-          {/* <div className="bg-gradient-to-br from-white to-blue-50/30 rounded-3xl p-8 shadow-lg border border-blue-100/50 mb-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-[#256c79] rounded-xl flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900">Browse by Category</h3>
-            </div>
-            <div className="flex flex-wrap gap-4">
-              {categories.map((category, index) => (
-                <button key={`${category.name}-${index}`} className="group relative overflow-hidden px-6 py-3 rounded-xl bg-white hover:bg-gradient-to-r hover:from-[#256c79] hover:to-[#2d8bc7] border-2 border-gray-200 hover:border-transparent transition-all duration-300 shadow-sm hover:shadow-lg hover:-translate-y-1">
-                  <span className="relative z-10 font-semibold text-gray-700 group-hover:text-white transition-colors">{category.name}</span>
-                  <span className="ml-2 relative z-10 bg-[#3b9dd9]/10 group-hover:bg-white/20 text-[#3b9dd9] group-hover:text-white px-3 py-1 rounded-full text-sm font-bold transition-colors">{category.count}</span>
-                </button>
-              ))}
-            </div>
-          </div> */}
-
           {loading && (
             <div className="mb-6 rounded-xl border border-blue-100 bg-white p-4 text-sm text-gray-600 shadow-sm">
               Loading blogs...
@@ -142,8 +147,13 @@ export default function BlogPage() {
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
               <div className="grid sm:grid-cols-2 gap-8">
-                {blogs.map((blog, index) => (
-                  <BlogCard key={blog.id} blog={blog} index={index} />
+                {currentBlogs.map((blog, index) => (
+                  <BlogCard 
+                    key={blog.id} 
+                    blog={blog} 
+                    index={index} 
+                    onReadMore={() => handleReadMore(blog)}
+                  />
                 ))}
               </div>
 
@@ -151,16 +161,27 @@ export default function BlogPage() {
                 <p className="mt-4 text-sm text-gray-500">No blog posts available.</p>
               )}
 
-              <Pagination currentPage={1} totalPages={Math.max(1, Math.ceil(blogs.length / 6))} />
+              <Pagination 
+                currentPage={currentPage} 
+                totalPages={totalPages} 
+                onPageChange={handlePageChange}
+              />
             </div>
 
             <div className="lg:sticky lg:top-24 lg:self-start">
-              <BlogSidebar categories={categories} recentPosts={blogs} />
+              <BlogSidebar categories={categories} recentPosts={blogs.slice(0, 5)} />
             </div>
           </div>
         </div>
       </section>
+
+      <BlogModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        blog={selectedBlog} 
+      />
     </div>
+
   )
 }
 

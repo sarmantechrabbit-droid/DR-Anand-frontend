@@ -1,4 +1,5 @@
 import * as Icons from 'lucide-react'
+import { Link } from 'react-router-dom'
 import siteData from '../data/siteData.json'
 
 export default function Services() {
@@ -32,7 +33,7 @@ export default function Services() {
           {siteData.services.slice(0, 4).map((service) => (
             <div 
               key={service.id} 
-              className="group relative rounded-2xl p-8 transition-all duration-500 hover:-translate-y-2 bg-[#244b55] hover:bg-[#133139] hover:shadow-xl"
+              className="group relative rounded-2xl p-8 transition-all duration-500 hover:-translate-y-2 bg-[#244b55] hover:bg-[#133139] hover:shadow-xl flex flex-col h-full"
             >
               <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 transition-all duration-500 group-hover:rotate-12 bg-[#3b9dd9]/20 text-[#58c8ca]">
                 {getIcon(service.icon)}
@@ -42,7 +43,7 @@ export default function Services() {
                 {service.title}
               </h3>
               
-              <ul className="space-y-3 mb-6">
+              <ul className="space-y-3 mb-6 flex-1">
                 <li className="flex items-start gap-2 text-sm text-gray-300">
                   <Icons.Check size={16} className="mt-0.5 flex-shrink-0 text-[#3b9dd9]" />
                   <span>{service.description}</span>
@@ -57,12 +58,15 @@ export default function Services() {
                 </li>
               </ul>
               
-              <button className="flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all group/btn bg-[#3b4d5c] text-white hover:bg-[#3b9dd9]">
+              <Link 
+                to={service.link || '#'} 
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all group/btn bg-[#3b4d5c] text-white hover:bg-[#3b9dd9] mt-auto"
+              >
                 View Details
                 <div className="w-8 h-8 rounded-full bg-[#3b9dd9] flex items-center justify-center group-hover/btn:translate-x-1 transition-transform">
                   <Icons.ArrowRight size={16} className="text-white" />
                 </div>
-              </button>
+              </Link>
             </div>
           ))}
         </div>
@@ -70,3 +74,4 @@ export default function Services() {
     </section>
   )
 }
+

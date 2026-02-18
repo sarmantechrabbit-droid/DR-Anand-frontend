@@ -64,7 +64,7 @@ export default function BlogSidebar({ categories, recentPosts }) {
                   }}
                 />
                 <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900 line-clamp-2 mb-2 group-hover:text-[#58c8ca] transition truncate w-full break-words">
+                  <h4 className="font-semibold text-gray-900 line-clamp-2 mb-1 group-hover:text-[#58c8ca] transition-colors leading-snug">
                     {post.title}
                   </h4>
                   <div className="flex items-center gap-1 text-xs text-gray-500">
@@ -87,9 +87,9 @@ export default function BlogSidebar({ categories, recentPosts }) {
         <input
           type="email"
           placeholder="Your email"
-          className="w-full px-4 py-3 rounded-lg mb-3 border border-[#e5e7eb] text-white focus:outline-none"
+          className="w-full px-4 py-3 rounded-lg mb-3 border border-white/20 bg-white/10 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-white/30 transition"
         />
-        <button className="w-full bg-white text-[#58c8ca] py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+        <button className="w-full bg-white text-[#256c79] py-3 rounded-lg font-bold hover:bg-gray-50 transition-colors">
           Subscribe
         </button>
       </div>

@@ -26,51 +26,31 @@
   "services": [
     {
       "id": 1,
-      "title": "Gastro Cancer Surgery",
+      "title": "Cancer Surgery",
       "description": "Experience compassionate and comprehensive cancer care with Dr. Anand Patel.",
-      "icon": "Scissors"
+      "icon": "Scissors",
+      "link": "/cancer-surgeon-ahmedabad"
     },
     {
       "id": 2,
-      "title": "Gastrointestinal Surgery",
+      "title": "Bariatric Surgery",
       "description": "Dr. Anand Patel is a Best gastro surgeon in ahmedabad who provides exceptional gastrointestinal.",
-      "icon": "Activity"
+      "icon": "Activity",
+      "link": "/bariatric-surgeon-ahmedabad"
     },
     {
       "id": 3,
-      "title": "Acid reflux surgery",
+      "title": "Gastro  surgery",
       "description": "Explore life-changing Mini Bypass Surgery for effective weight loss and improved health outcomes.",
-      "icon": "Shield"
+      "icon": "Shield",
+      "link": "/gastro-surgeon-ahmedabad"
     },
     {
       "id": 4,
       "title": "Obesity surgery",
       "description": "Dr. Anand Patel - Best obesity surgeon, a specialist in this field, performs surgeries such as gastric bypass, sleeve gastrectomy, and adjustable gastric banding.",
-      "icon": "Zap"
-    },
-    {
-      "id": 5,
-      "title": "Gastric Surgery",
-      "description": "Treatment for stomach ulcers, tumors, and other gastric conditions",
-      "icon": "Heart"
-    },
-    {
-      "id": 6,
-      "title": "Colorectal Surgery",
-      "description": "Surgical treatment for colon and rectal disorders",
-      "icon": "Stethoscope"
-    },
-    {
-      "id": 7,
-      "title": "Endoscopy",
-      "description": "Diagnostic and therapeutic endoscopic procedures",
-      "icon": "Search"
-    },
-    {
-      "id": 8,
-      "title": "Bariatric Surgery",
-      "description": "Weight loss surgery for obesity management",
-      "icon": "TrendingDown"
+      "icon": "Zap",
+      "link": "/bariatric-surgeon-ahmedabad"
     }
   ],
   "internationalPatientSupport": {

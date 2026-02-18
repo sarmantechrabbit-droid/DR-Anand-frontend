@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { HelpCircle, Plus, Minus } from 'lucide-react'
 import { API_BASE_URL } from '../../api/api'
+import { Link } from 'react-router-dom'
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState(0)
@@ -84,9 +85,11 @@ export default function FAQ() {
               <HelpCircle size={48} className="mb-4" />
               <h3 className="text-xl font-bold mb-2">Still have questions?</h3>
               <p className="mb-4 opacity-90">Our team is here to help you with any concerns.</p>
-              <button className="bg-white text-[#58c8ca] px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition">
-                Contact Us
-              </button>
+              <Link to="/contact">
+                <button className="bg-white text-[#58c8ca] px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition">
+                  Contact Us
+                </button>
+              </Link>
             </div>
           </div>
 
