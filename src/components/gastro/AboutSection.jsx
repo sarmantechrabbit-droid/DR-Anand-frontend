@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import SectionWrapper from './SectionWrapper'
+import img from '../../assets/images/Home/team.webp'
 
 export default function AboutSection({ data }) {
   return (
@@ -16,7 +17,7 @@ export default function AboutSection({ data }) {
             >
               <div className="absolute -top-6 -left-6 w-full h-full bg-gradient-to-br from-[#58c8ca]/20 to-[#4ab4b6]/20 rounded-3xl -z-10"></div>
               <img
-                src={data.image}
+                src={img}
                 alt="Gastro Surgery"
                 className="rounded-3xl shadow-2xl w-full h-[500px] object-cover"
               />

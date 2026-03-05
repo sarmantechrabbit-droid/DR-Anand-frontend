@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import SectionWrapper from './SectionWrapper'
+import img from '../../assets/images/Home/about_img.webp';
 
 export default function DoctorProfile({ data }) {
   return (
@@ -22,9 +23,9 @@ export default function DoctorProfile({ data }) {
             >
               <div className="absolute -top-6 -left-6 w-full h-full bg-gradient-to-br from-[#58c8ca]/20 to-[#4ab4b6]/20 rounded-3xl -z-10"></div>
               <img
-                src={data.image}
+                src={img}
                 alt={data.imageDescription}
-                className="rounded-3xl shadow-2xl w-full h-[500px] object-cover"
+                className="rounded-3xl shadow-2xl w-full h-[600px] object-cover object-top"
               />
             </motion.div>
 

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Award, Users, TrendingUp, Play } from 'lucide-react'
+import img from '../../assets/images/Home/Anand.webp';
 
 export default function DoctorProfile() {
   return (
@@ -15,9 +16,9 @@ export default function DoctorProfile() {
           >
             <div className="absolute -top-6 -left-6 w-full h-full bg-gradient-to-br from-[#3b9dd9]/20 to-[#58c8ca]/20 rounded-3xl -z-10"></div>
             <img
-              src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&h=800&fit=crop"
+              src={img}
               alt="Dr. Anand"
-              className="rounded-3xl shadow-2xl w-full h-[550px] object-cover"
+              className="rounded-3xl shadow-2xl w-full h-[700px] object-cover bg-[#243949]"
             />
             <motion.div 
               className="absolute bottom-8 left-8 right-8 bg-white/95 backdrop-blur-sm p-6 rounded-2xl shadow-xl"

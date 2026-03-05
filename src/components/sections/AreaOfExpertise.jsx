@@ -8,15 +8,15 @@ import img4 from '../../assets/images/logo.png'
 
 const imageMap = {
   1: img1,
-  2: img2,
-  3: img3,
-  4: img4,
+  2: img1,
+  3: img1,
+  4: img1,
   5: img1,
-  6: img2,
-  7: img3,
-  8: img4,
+  6: img1,
+  7: img1,
+  8: img1,
   9: img1,
-  10: img2
+  10: img1
 }
 
 export default function AreaOfExpertise() {
